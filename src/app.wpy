@@ -1,0 +1,209 @@
+<style lang="less">
+
+</style>
+
+<script>
+import wepy from 'wepy'
+import 'wepy-async-function'
+
+
+export default class extends wepy.app {
+  config = {
+    pages: [
+      'pages/tabs/home',
+      'pages/tabs/cates',
+      'pages/tabs/search',
+      'pages/tabs/cart',
+      'pages/tabs/my',
+      'pages/goods_detail/index',
+      'pages/goods_list/index',
+      'pages/order/index',
+      'pages/orderList/index'
+    ],
+    "usingComponents": {
+      "van-sidebar": "assets/vant/sidebar/index",
+      "van-sidebar-item": "assets/vant/sidebar-item/index",
+      "van-grid": "assets/vant/grid/index",
+      "van-grid-item": "assets/vant/grid-item/index",
+      "van-search": "assets/vant/search/index",
+      "van-cell": "assets/vant/cell/index",
+      "van-cell-group": "assets/vant/cell-group/index",
+      "van-tag": "assets/vant/tag/index",
+      "van-icon": "assets/vant/icon/index",
+      "van-card": "assets/vant/card/index",
+      "van-tab": "assets/vant/tab/index",
+      "van-tabs": "assets/vant/tabs/index",
+      "van-goods-action": "assets/vant/goods-action/index",
+      "van-goods-action-icon": "assets/vant/goods-action-icon/index",
+      "van-goods-action-button": "assets/vant/goods-action-button/index",
+      "van-stepper": "assets/vant/stepper/index",
+      "van-checkbox": "assets/vant/checkbox/index",
+      "van-swipe-cell": "assets/vant/swipe-cell/index",
+      "van-submit-bar": "assets/vant/submit-bar/index",
+      "van-button": "assets/vant/button/index"
+    },
+    window: {
+      backgroundTextStyle: 'dark',
+      navigationBarBackgroundColor: '#D81E06',
+      navigationBarTitleText: '黑马优购',
+      navigationBarTextStyle: 'white'
+    },
+    tabBar: {
+      list: [
+        {
+          pagePath: 'pages/tabs/home',
+          text: '首页',
+          iconPath: 'assets/icons/home.png',
+          selectedIconPath: 'assets/icons/home-active.png'
+        },
+        {
+          pagePath: 'pages/tabs/cates',
+          text: '分类',
+          iconPath: 'assets/icons/cates.png',
+          selectedIconPath: 'assets/icons/cates-active.png'
+        },
+        {
+          pagePath: 'pages/tabs/search',
+          text: '搜索',
+          iconPath: 'assets/icons/search.png',
+          selectedIconPath: 'assets/icons/search-active.png'
+        },
+        {
+          pagePath: 'pages/tabs/cart',
+          text: '购物车',
+          iconPath: 'assets/icons/cart.png',
+          selectedIconPath: 'assets/icons/cart-active.png'
+        },
+        {
+          pagePath: 'pages/tabs/my',
+          text: '我的',
+          iconPath: 'assets/icons/my.png',
+          selectedIconPath: 'assets/icons/my-active.png'
+        }
+      ]
+    }
+  }
+
+  globalData = {
+    cart: []
+  }
+
+  addTocar (goods) {
+    const index = this.globalData.cart.findIndex(item=>{
+      return item.id == goods.goods_id
+    })
+    if(index!==-1){
+      this.globalData.cart[index].count++
+    }else{
+      const goodsObj = {
+        // 商品id
+        id: goods.goods_id,
+        // 商品名称
+        name: goods.goods_name,
+        // 商品价格
+        price: goods.goods_price,
+        // 商品数量
+        count: 1,
+        // 商品图片
+        pic: goods.goods_big_logo,
+        // 是否购买
+        isCheck: true
+      }
+      this.globalData.cart.push(goodsObj)
+    }
+    this.saveCart()
+  }
+
+  // 更新商品数量
+  updateCount (id,count) {
+    const i = this.globalData.cart.findIndex(x=>x.id == id)
+    this.globalData.cart[i].count = count
+    this.saveCart()
+  }
+
+  // 更新isCheck
+  updateIsCheck (id, status) {
+    const i = this.globalData.cart.findIndex(x=>x.id == id)
+    this.globalData.cart[i].isCheck = status
+    this.saveCart()
+  }
+
+  // 全选
+  fullChange (status) {
+    this.globalData.cart.forEach(item=>{
+      item.isCheck = status
+    })
+    this.saveCart()
+  }
+
+  // 删除商品
+  removeGoods (id) {
+    const i = this.globalData.cart.findIndex(x=>x.id == id)
+    this.globalData.cart.splice(i,1)
+    this.saveCart()
+  }
+
+  // 渲染tabbarBadage的方法
+  renderTabbarBadage () {
+    var total = 0
+    this.globalData.cart.forEach(item=>{
+      if(item.isCheck){
+        total+=item.count
+      }
+    })
+    wepy.setTabBarBadge({
+      index: 3,
+      text: total+ ''
+    }).catch(err=>err)
+  } 
+
+  saveCart () {
+    wepy.setStorageSync('carts',this.globalData.cart)
+    this.renderTabbarBadage()
+  }
+
+  constructor () {
+    super()
+    this.use('requestfix')
+    this.use('promisify')
+    // 拦截request请求
+    this.intercept('request', {
+        // 发出请求时的回调函数
+        config (p) {
+            wepy.showLoading({
+              title: '正在加载中...'
+            })
+            if(wepy.getStorageSync('token')) {
+              p.header = {
+                Authorization:wepy.getStorageSync('token')
+              }
+            }
+            // 必须返回OBJECT参数对象，否则无法发送请求到服务端
+            return p;
+        },
+
+        // 请求成功后的回调函数
+        success (p) {
+            // 必须返回响应数据对象，否则后续无法对响应数据进行处理
+            return p;
+        },
+
+        //请求失败后的回调函数
+        fail (p) {
+            // 必须返回响应数据对象，否则后续无法对响应数据进行处理
+            return p;
+        },
+
+        // 请求完成时的回调函数(请求成功或失败都会被执行)
+        complete (p) {
+            wepy.hideLoading();
+        }
+    });
+  }
+
+  onLaunch() {
+    this.globalData.cart = wepy.getStorageSync('carts') || []
+    this.renderTabbarBadage()
+  }
+}
+</script>

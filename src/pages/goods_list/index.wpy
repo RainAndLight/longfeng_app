@@ -1,0 +1,44 @@
+<template>
+  <van-card
+    custom-class="goods_item"
+    wx:for="{{goodsList}}"
+    wx:key="index"
+    num="{{item.goods_number}}"
+    price="{{item.goods_price}}"
+    title="{{item.goods_name}}"
+    thumb="{{ item.goods_small_logo || 'http://destiny001.gitee.io/image/none.png'}}"
+    thumb-link="/pages/goods_detail/index?goods_id={{item.goods_id}}"
+  />
+  <view hidden="{{hiddenIsOver}}" class="isOver">-------客观没油了哦-------</view>
+</template>
+
+<script>
+
+import wepy from 'wepy'
+import mix from '@/mixins/goods_list'
+export default class Home extends wepy.page {
+  config = {
+    navigationBarTitleText: '商品列表',
+    enablePullDownRefresh: true,
+    backgroundColor: '#ccc',
+    backgroundTextStyle: 'light'
+  }
+
+  mixins = [mix]
+}
+
+</script>
+
+<style lang='less'>
+.goods_item{
+  border-bottom: 4rpx solid #ccc;
+}
+.isOver{
+  height: 70rpx;
+  border-top:3rpx solid #ccc;
+  text-align: center;
+  line-height: 70rpx;
+  font-size: 30rpx;
+  color: #ccc;
+}
+</style>

@@ -1,0 +1,43 @@
+<template>
+  <view class="orderList">
+    <van-tabs active="{{ active }}" bind:change="tabsOnChange">
+      <van-tab title="全部">
+        <repeat for="{{list}}" key="index" index="index" item="item">
+          <order-item :item="item"></order-item>
+        </repeat>
+      </van-tab>
+      <van-tab title="已付款">
+        <repeat for="{{list}}" key="index" index="index" item="item">
+          <order-item :item="item"></order-item>
+        </repeat>
+      </van-tab>
+      <van-tab title="未付款">
+        <repeat for="{{list}}" key="index" index="index" item="item">
+          <order-item :item="item"></order-item>
+        </repeat>
+      </van-tab>
+    </van-tabs>
+  </view>
+</template>
+
+<script>
+
+import wepy from 'wepy'
+import mix from '@/mixins/order_list.js'
+import orderItem from '@/components/orderItem/index'
+export default class extends wepy.page {
+  config = {
+    navigationBarTitleText: '订单列表'
+  }
+
+  components = {
+    'order-item':orderItem
+  }
+  mixins = [mix]
+}
+
+</script>
+
+<style lang='less'>
+
+</style>

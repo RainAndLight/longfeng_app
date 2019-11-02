@@ -1,0 +1,85 @@
+<template>
+  <view class="order">
+    <view class="chooseAddress" wx:if="{{isShowAddress}}">
+      <van-button @tap="chooseAddress" type="info" size="small">+ 选择收货地址</van-button>
+    </view>
+    <view class="addressInfo" wx:else>
+      <view class="box1">
+        <view class="left">收货人：{{ addressInfo.userName }}</view>
+        <view class="right" @tap="chooseAddress">
+          联系电话：{{addressInfo.telNumber}}
+          <van-icon name="arrow" />
+        </view>
+      </view>
+      <view class="box2">收货地址：{{ addressStr }}</view>
+    </view>
+    <image class="step_line" src="http://destiny001.gitee.io/image/cart_border.png"></image>
+    <view class="goods">
+      <van-card
+        wx:for="{{cart}}"
+        wx:key="{{index}}"
+        num="{{item.count}}"
+        price="{{item.price}}"
+        title="{{item.name}}"
+        thumb="{{ item.pic || 'http://destiny001.gitee.io/image/none.png' }}"
+      />
+    </view>
+    <van-button wx:if="{{isLogin == false}}" class="login" type="primary" open-type="getUserInfo" bindgetuserinfo="getUserInfo" size="large">登录</van-button>
+    <van-submit-bar
+      wx:else
+      price="{{ total }}"
+      button-text="支付订单"
+      bind:submit="onSubmitPay"
+    />
+  </view>
+</template>
+
+<script>
+
+import wepy from 'wepy'
+import mix from '@/mixins/order'
+export default class Home extends wepy.page {
+  config = {
+    navigationBarTitleText: '确认订单'
+  }
+
+  mixins = [mix]
+}
+
+</script>
+
+<style lang='less'>
+.order{
+  .chooseAddress{
+    width: 750rpx;
+    height: 150rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .step_line {
+    height:20rpx;
+    width: 750rpx;
+  }
+  .addressInfo {
+    font-size: 28rpx;
+    padding: 10rpx 20rpx;
+    .box1{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .box2{
+      padding-top: 20rpx;
+    }
+  }
+}
+.goods{
+  padding-bottom: 50px;
+}
+.login {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+</style>

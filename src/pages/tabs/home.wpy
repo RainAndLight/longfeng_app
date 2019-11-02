@@ -1,0 +1,78 @@
+<template>
+  <!-- 轮播图 -->
+  <swiper indicator-dots circular>
+    <swiper-item wx:for="{{swiperData}}" wx:key="index">
+      <navigator url="{{ item.navigator_url }}">
+        <image src="{{item.image_src}}"></image>
+      </navigator>
+    </swiper-item>
+  </swiper>
+
+  <!-- 分类 -->
+  <view class="cate_box">
+    <navigator hover-class="none" url="/pages/tabs/cates" open-type="switchTab" wx:for="{{ catesData }}" wx:key="index">
+      <image src="{{item.image_src}}"></image>
+    </navigator>
+  </view>
+
+  <!-- 楼层 -->
+  <view class="floor_box">
+    <view class="floor_item" wx:for="{{floorData}}" wx:key="index">
+      <!-- 标题图片 -->
+      <image class="tit" src="{{item.floor_title.image_src}}"></image>
+      <!-- 内容图片 -->
+      <view class="content_img">
+        <image @tap="goGoodsDetail({{item.navigator_url}})" style="width:{{item.image_width}}rpx" wx:key="index" wx:for="{{item.product_list}}" src="{{item.image_src}}"></image>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+
+import wepy from 'wepy'
+import mixinHome from '@/mixins/tabs/home.js'
+import '@/utils/api.js'
+export default class Home extends wepy.page {
+  mixins = [mixinHome]
+}
+
+</script>
+
+<style lang='less'>
+swiper{
+  height:350rpx;
+  navigator,image{
+    width: 100%;
+    height: 100%;
+  }
+}
+.cate_box{
+  display: flex;
+  justify-content: space-around;
+  padding: 30rpx 0rpx;
+  image{
+    width: 128rpx;
+    height: 140rpx;
+  }
+}
+
+.floor_box{
+  .floor_item{
+    .tit{
+      height: 50rpx;
+      width: 640rpx;
+    }
+    .content_img{
+      image{
+        height: 190rpx;
+        float: left;
+        margin: 8rpx;
+      }
+      image:nth-child(1){
+          height: 390rpx;
+      }
+    }
+  }
+}
+</style>

@@ -1,0 +1,189 @@
+<template>
+  <view class="goods_detail">
+    <swiper indicator-dots circular>
+      <swiper-item wx:for="{{goods_detail.pics}}" wx:key="index">
+        <image @tap="previewImage({{item.pics_big_url}})" src="{{item.pics_big_url}}"></image>
+      </swiper-item>
+    </swiper>
+    <view class="info">
+      <view class="box1">
+        <view class="price">￥{{ goods_detail.goods_price }}</view>
+        <view class="goods_name">
+          <view class="left">
+            {{goods_detail.goods_name}}
+          </view>
+          <view class="right">
+            <van-icon name="star-o" />
+            <text>收藏</text>
+          </view>
+        </view>
+        <view class="express">快递：免运费</view>
+      </view>
+      <view class="line"></view>
+      <view class="box2">
+        <view>
+          <text>促销</text>
+          <text>满200元减400元</text>
+        </view>
+        <view>
+          <text>已选</text>
+          <text>黑色/s/1件</text>
+        </view>
+      </view>
+      <view class="line"></view>
+      <view class="box3" @tap="chooseAddress">
+        <view>
+          <text>送至1111</text>
+          <text>{{formatAddressInfo}}</text>
+        </view>
+        <van-icon name="arrow" />
+      </view>
+      <view class="line"></view>
+    </view>
+    <van-tabs active="{{0}}">
+      <van-tab title="图文详情">
+        <rich-text nodes="{{goods_info.goods_introduce}}"></image>"></rich-text>
+      </van-tab>
+      <van-tab title="规格参数">
+        <view wx:for="{{ goods_detail.attrs }}" wx:key="index" class="params_row">
+          <text>{{item.attr_name}}</text>
+          <text>{{item.attr_vals}}</text>
+        </view>
+      </van-tab>
+    </van-tabs>
+
+    <van-goods-action custom-class="goods_nav">
+      <van-goods-action-icon
+        icon="chat-o"
+        text="客服"
+        bind:click="onClickIcon"
+        open-type="contact"
+      />
+      <van-goods-action-icon
+        icon="cart-o"
+        text="购物车"
+        info="{{goods_count}}"
+        link-type="switchTab"
+        url="/pages/tabs/cart"
+      />
+      <van-goods-action-button
+        text="加入购物车"
+        type="warning"
+        bind:click="addToCart"
+      />
+      <van-goods-action-button
+        text="立即购买"
+        bind:click="onClickButton"
+      />
+    </van-goods-action>
+  </view>
+</template>
+
+<script>
+
+import wepy from 'wepy'
+import mix from '@/mixins/goods_detail'
+export default class Home extends wepy.page {
+  mixins = [mix]
+}
+
+</script>
+
+<style lang='less'>
+.goods_detail{
+  padding-bottom: 50px;
+  swiper{
+    height:750rpx;
+    image{
+      width:100%;
+      height: 100%;
+    }
+  }
+  .info{
+    .box1{
+      padding: 10rpx 20rpx;
+      .price{
+        color: red;
+        font-size: 35rpx;
+      }
+      .goods_name {
+        display: flex;
+        padding: 15rpx 0;
+        .left{
+          font-size: 28rpx;
+        }
+        .right {
+          width: 200rpx;
+          margin-left: 10rpx;
+          text-align: center;
+          border-left:1px solid #ccc;
+          text{
+            font-size: 28rpx;
+            display: block;
+          }
+        }
+      }
+
+      .express {
+        color: #333;
+        font-size: 28rpx;
+        font-weight: bold;
+      }
+    }
+
+    .box2 {
+      padding: 0rpx 20rpx;
+      view{
+        font-size: 28rpx;
+        padding: 20rpx 0;
+        text:nth-child(2){
+          margin-left: 10rpx;
+          color: #999;
+        }
+      }
+    }
+
+    .box3{
+      padding: 0rpx 20rpx;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      view{
+        font-size: 28rpx;
+        padding: 20rpx 0;
+        text:nth-child(2){
+          margin-left: 10rpx;
+          color: #999;
+        }
+      }
+    }
+  }
+
+  .params_row {
+    display: flex;
+    text{
+      width: 50%;
+      border-right:1px solid #eee;
+      border-bottom:1px solid #eee;
+      text-align: center;
+      line-height: 80rpx;
+      color: #333;
+      font-size: 30rpx;
+    }
+    text:nth-child(2) {
+      border-right:none;
+    }
+  }
+    
+}
+
+.goods_nav{
+  z-index:999999;
+}
+
+.line{
+  height:15rpx;
+  background: #eee;
+  width:100%;
+}
+</style>

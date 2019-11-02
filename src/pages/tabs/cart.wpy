@@ -1,0 +1,101 @@
+<template>
+  <view class="carts">
+    <view class="empty" wx:if="{{isEmpty}}">
+      <image src="http://destiny001.gitee.io/image/cart_empty.png"></image>
+      <view>哎呦，购物车是空的啊！</view>
+    </view>
+    <!-- 非空页面 -->
+    <view class="cart_list" wx:else>
+      <van-cell title="购物车列表" icon="cart-o" />
+      <van-swipe-cell right-width="{{ 65 }}" left-width="{{ 0.001 }}" wx:for="{{cart}}" wx:key="{{index}}">
+        <view slot="right" class="cell_right" @tap="removeGoods({{item.id}})">删除</view>
+        <van-card
+          title="{{item.name}}"
+        >
+          <view class="desc" slot="desc">
+            <text>￥{{item.price}}</text>
+            <van-stepper data-id="{{item.id}}" value="{{ item.count }}" bind:change="countChange" />
+          </view>
+          <view class="thumb" slot="thumb">
+            <van-checkbox checked-color="#FF0000" data-id="{{item.id}}" value="{{ item.isCheck }}" bind:change="checkChange"></van-checkbox>
+            <image src="{{item.pic}}"></image>
+          </view>
+        </van-card>
+      </van-swipe-cell>
+      <van-submit-bar
+        price="{{ totalPrice }}"
+        button-text="提交订单"
+        bind:submit="onSubmitOrder"
+        tip="{{ false }}"
+      >
+        <van-checkbox style="margin-left:10px;" value="{{ isFullCheck }}" bind:change="onFullChange">全选</van-checkbox>
+      </van-submit-bar>
+    </view>
+  </view>
+</template>
+
+<script>
+
+import wepy from 'wepy'
+import mix from '@/mixins/tabs/cart'
+export default class Cart extends wepy.page {
+  mixins = [mix]
+}
+
+</script>
+
+<style lang='less'>
+.carts{
+  .empty{
+    text-align: center;
+    padding-top: 50rpx;
+    image{
+      width: 120rpx;
+      height:120rpx;
+      margin: 20rpx 0;
+    }
+    view{
+      font-size: 30rpx;
+      color: #666;
+    }
+  }
+
+  .cart_list {
+    padding-bottom: 50px;
+    .desc{
+      display: flex;
+      justify-content: space-between;
+      margin: 10rpx 0;
+      align-items: center;
+      text{
+        color:red;
+      }
+    }
+    .thumb {
+      display: flex;
+      align-items: center;
+      width:120px;
+      height:90px;
+      image{
+        height:90px;
+        width:90px;
+        margin: 0px 10rpx;
+      }
+    }
+
+    .cell_right {
+      height: 100px;
+      width: 65px;
+      font-size: 30rpx;
+      line-height: 100px;
+      text-align: center;
+      background: red;
+      color: #fff;
+    }
+  }
+}
+
+.van-card__thumb {
+  width: 110px !important;
+}
+</style>
